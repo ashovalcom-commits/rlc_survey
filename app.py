@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # הוספת אייקון לדף
-st.set_page_config(page_title="שאלון ציפיות ועמדות", page_icon="⚖️", layout="centered")
+st.set_page_config(page_title="שאלון על גזענות של ציפיות נמוכות", page_icon="⚖️", layout="centered")
 
 # הזרקת CSS לעיצוב מתקדם: טיפוגרפיה, כרטיסיות, יישור הודעות וכפתורים
 st.markdown("""
@@ -12,6 +12,10 @@ st.markdown("""
         direction: rtl !important;
         text-align: right !important;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    h1 {
+    font-size: 32px !important; /* ניתן לשנות את המספר לגודל הרצוי */
     }
     
     /* עיצוב קופסת המקרא */
@@ -67,7 +71,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("⚖️ שאלון בנושא גזענות של ציפיות נמוכות")
+st.title("⚖️ שאלון על גזענות של ציפיות נמוכות")
 st.write("דרג/י כל היגד על סולם של 1 עד 5. השאלון אנונימי לחלוטין.")
 
 st.markdown("""
