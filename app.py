@@ -1,13 +1,81 @@
 import streamlit as st
 import requests
 
-st.set_page_config(page_title="שאלון ציפיות ועמדות", layout="centered")
+# הוספת אייקון לדף
+st.set_page_config(page_title="שאלון ציפיות ועמדות", page_icon="⚖️", layout="centered")
 
-# שימוש ב-HTML מפורש כדי ליישר רק את הטקסטים לימין, בלי לשבש את הסליידרים
-st.markdown("<h1 style='text-align: right; direction: rtl;'>שאלון: סוכנות מוסרית, אחריות וציפיות בסכסוך</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: right; direction: rtl;'>דרג/י כל היגד על סולם של 1 עד 5. השאלון אנונימי לחלוטין.</p>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: right; direction: rtl;'><b>מקרא:</b><br>1 = לא מסכים/ה כלל | 2 = מסכים/ה במידה מועטה | 3 = ניטרלי/ת | 4 = מסכים/ה במידה רבה | 5 = מסכים/ה לחלוטין</p>", unsafe_allow_html=True)
-st.markdown("<hr>", unsafe_allow_html=True)
+# הזרקת CSS לעיצוב מתקדם: טיפוגרפיה, כרטיסיות, יישור הודעות וכפתורים
+st.markdown("""
+    <style>
+    /* כיווניות ויישור גלובלי לימין */
+    .stApp, .stMarkdown, p, h1, h2, h3, h4, h5, h6, label {
+        direction: rtl !important;
+        text-align: right !important;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    /* עיצוב קופסת המקרא */
+    .legend-box {
+        background-color: #f0f2f6;
+        padding: 15px 20px;
+        border-radius: 8px;
+        border-right: 5px solid #4a90e2;
+        margin-bottom: 30px;
+        font-size: 16px;
+        color: #31333F;
+    }
+
+    /* עיצוב שורת כפתורי הרדיו (כרטיסייה עם צללית) */
+    div.row-widget.stRadio > div {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #e0e4e8;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        margin-top: 5px;
+        margin-bottom: 25px;
+    }
+    
+    /* סידור מחדש של הודעות התוצאה (Success, Warning, Error) לימין */
+    div[data-testid="stAlert"] {
+        direction: rtl;
+        text-align: right;
+    }
+    div[data-testid="stAlert"] > div {
+        flex-direction: row;
+    }
+    
+    /* עיצוב בולט לכפתור השליחה */
+    div[data-testid="stFormSubmitButton"] > button {
+        width: 100%;
+        background-color: #4a90e2;
+        color: white;
+        font-size: 18px;
+        font-weight: bold;
+        border-radius: 8px;
+        padding: 12px;
+        transition: all 0.3s ease;
+    }
+    div[data-testid="stFormSubmitButton"] > button:hover {
+        background-color: #357abd;
+        border-color: #357abd;
+        color: white;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+st.title("⚖️ שאלון: סוכנות מוסרית וציפיות בסכסוך")
+st.write("דרג/י כל היגד על סולם של 1 עד 5. השאלון אנונימי לחלוטין.")
+
+st.markdown("""
+<div class="legend-box">
+    <b>מקרא:</b><br>
+    1 = לא מסכים/ה כלל &nbsp;|&nbsp; 2 = מסכים/ה במידה מועטה &nbsp;|&nbsp; 3 = ניטרלי/ת &nbsp;|&nbsp; 4 = מסכים/ה במידה רבה &nbsp;|&nbsp; 5 = מסכים/ה לחלוטין
+</div>
+""", unsafe_allow_html=True)
 
 questions = [
     "כשקבוצות ערביות או פלסטיניות נוקטות באלימות כלפי אזרחים, זהו בעיקר ביטוי בלתי נמנע של ייאוש ותנאי חיים קשים, ולא בחירה מוסרית פגומה שיש לשפוט באותה חומרה שבה שופטים אלימות יהודית.",
@@ -29,30 +97,25 @@ responses = []
 
 with st.form("survey_form"):
     for i, q in enumerate(questions):
-        # עטיפת השאלה ב-DIV שמיישר רק אותה לימין
-        st.markdown(f"<div dir='rtl' style='text-align: right; margin-bottom: 10px; font-size: 18px;'><b>{i+1}. {q}</b></div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='font-size: 18px; margin-bottom: 5px;'><b>{i+1}. {q}</b></div>", unsafe_allow_html=True)
         
-        # החלפנו את הסליידר בכפתורי רדיו אופקיים שעובדים מעולה בעברית
         score = st.radio(
             f"q_{i}", 
             options=[1, 2, 3, 4, 5], 
-            index=2, # בחירת ברירת המחדל תהיה 3 (המקום השלישי במערך)
+            index=2, 
             horizontal=True, 
             label_visibility="collapsed",
             key=f"q_{i}"
         )
         total_score += score
         responses.append(score)
-        st.write("") 
     
-    # עטיפת הכפתור ב-DIV שמיישר אותו לימין
-    st.markdown('<div dir="rtl" style="text-align: right;">', unsafe_allow_html=True)
+    st.write("") # ריווח קל לפני הכפתור
     submitted = st.form_submit_button("סיים וקבל תוצאה")
-    st.markdown('</div>', unsafe_allow_html=True)
 
 if submitted:
     st.divider()
-    st.markdown(f"<h2 style='text-align: right; direction: rtl;'>הציון שלך: {total_score} מתוך 60</h2>", unsafe_allow_html=True)
+    st.markdown(f"<h2>הציון שלך: {total_score} מתוך 60</h2>", unsafe_allow_html=True)
     
     if 12 <= total_score <= 24:
         st.success("**סטנדרט מוסרי אחיד וכיבוד סוכנות**\n\nאת/ה מתייחס/ת לערבים וליהודים כאל שווים לחלוטין ביכולתם לקבל החלטות מוסריות ולקחת אחריות על מעשיהם. אינך עושה לאף צד 'הנחות מוסריות' על בסיס חולשה פוליטית, ומאמין/ה שזכויות אדם וחוקי מוסר חלים באופן זהה על כל אדם, ללא קשר לרקע או למאזן הכוחות.")
